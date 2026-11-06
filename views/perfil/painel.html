@@ -1,0 +1,111 @@
+{#
+  Painel de perfil do usuário logado.
+  Dados recebidos do controller (perfil_controller.painel):
+    usuario            -> objeto Usuario (nome, e-mail, pontos, endereco...)
+    fases              -> lista de (cupom, liberado)
+    fases_liberadas    -> quantas fases já foram liberadas
+    pontos_acumulados  -> total de pontos já ganhos
+    maquinas           -> lista de (maquina, distancia_km), da mais próxima para a mais distante
+    mapa               -> dicionário {casa, maquinas, proxima} que o JavaScript desenha no mapa
+#}
+{% extends "base.html" %}
+{% block titulo %}Perfil{% endblock %}
+{% block cabeca %}<link href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" rel="stylesheet">{% endblock %}
+{% block conteudo %}
+<div class="perfil-grade">
+
+  {# ---------- cartão da conta ---------- #}
+  <section class="bloco" aria-labelledby="tConta">
+    <div class="perfil-topo">
+      <div class="avatar-grande pequeno"><img src="{{ url_for('static', filename='img/avatar.svg') }}" alt="" width="30" height="40"></div>
+      <div>
+        <h1 id="tConta">{{ usuario.nome }}</h1>
+        <small class="dica">{{ usuario.email }}</small>
+      </div>
+    </div>
+    <div class="numeros">
+      <div class="numero"><b>{{ usuario.pontos }}</b><small>pontos de saldo</small></div>
+      <div class="numero"><b>{{ fases_liberadas }}/{{ fases|length }}</b><small>fases liberadas</small></div>
+    </div>
+    <div class="caixa-info">
+      <b>Sua casa</b>
+      {{ usuario.endereco.rua_e_numero() }}<br>{{ usuario.endereco.bairro_e_cidade() }}
+    </div>
+    <dl class="dados-conta">
+      <div><dt>Telefone</dt><dd>{{ usuario.telefone }}</dd></div>
+      <div><dt>Idade</dt><dd>{{ usuario.idade }} anos</dd></div>
+      <div><dt>Moradores</dt><dd>{{ usuario.moradores }}</dd></div>
+      <div><dt>Cliente desde</dt><dd>{{ usuario.criado_em|data_br }}</dd></div>
+    </dl>
+    <div class="acoes-perfil">
+      <a class="link" href="{{ url_for('perfil.alterar_endereco') }}">Alterar endereço</a>
+      <form method="post" action="{{ url_for('perfil.sair') }}"><button class="link">Sair da conta</button></form>
+    </div>
+  </section>
+
+  <div class="coluna">
+    {# ---------- mapa: da casa até a máquina mais próxima (desenhado por static/js/mapa_perfil.js) ---------- #}
+    <section class="bloco mapa-bloco" aria-labelledby="tMapa">
+      <div class="cab-bloco">
+        <h2 id="tMapa"><i class="ico"></i>Mapa de máquinas</h2>
+        <div class="legenda">
+          <span><i style="background:#1a73e8"></i>Sua casa</span>
+          <span><i style="background:#2fb24c"></i>Máquina</span>
+          {% if mapa.proxima %}<span><i class="traco"></i>Até a mais próxima</span>{% endif %}
+        </div>
+      </div>
+      <div class="mapa-casa" data-mapa-casa='{{ mapa|tojson }}' role="img"
+           aria-label="Mapa com a sua casa e as máquinas"><div class="mapa-vazio">Carregando o mapa…</div></div>
+      {% if mapa.proxima %}
+      <p class="dica rodape-bloco">Mais próxima: <b>{{ mapa.proxima.nome }}</b>, a {{ mapa.proxima.km|km }} em linha reta da sua casa.</p>
+      {% endif %}
+    </section>
+
+    {# ---------- máquinas mais próximas da casa ---------- #}
+    <section class="bloco" aria-labelledby="tPerto">
+      <h2 id="tPerto"><i class="ico"></i>Máquinas perto de casa</h2>
+      {% if maquinas %}
+      <ol class="tiles">
+        {% for maquina, distancia in maquinas %}
+        <li class="tile {{ 'destaque' if loop.first }}">
+          <span class="num">{{ loop.index }}</span>
+          <div class="info">
+            <b>{{ maquina.nome }}</b>
+            <small>{% if loop.first %}Mais próxima · {% endif %}{{ maquina.bairro }} · {{ maquina.percentual_ocupado }}% cheia</small>
+            <div class="ocupa"><i class="{{ 'cheia' if maquina.percentual_ocupado > 80 }}" style="--fracao: {{ [maquina.percentual_ocupado, 100]|min / 100 }}"></i></div>
+          </div>
+          <span class="pilula">{{ distancia|km }}</span>
+        </li>
+        {% endfor %}
+      </ol>
+      <p class="dica rodape-bloco">Distância em linha reta a partir do endereço da sua casa.</p>
+      {% else %}
+      <p class="vazio">Nenhuma máquina ativa no momento.</p>
+      {% endif %}
+    </section>
+
+    {# ---------- fases de cupons (cada cupom é liberado pelos pontos acumulados) ---------- #}
+    <section class="bloco" aria-labelledby="tFases">
+      <h2 id="tFases"><i class="ico amarelo"></i>Fases de cupons</h2>
+      <p class="dica">Você já juntou <b>{{ pontos_acumulados }}</b> pontos. Cada cupom libera quando seus pontos acumulados chegam ao custo dele.</p>
+      {% if fases %}
+      <ul class="fases">
+        {% for cupom, liberada in fases %}
+        <li class="fase {{ 'liberada' if liberada }}">
+          <span class="fase-numero" aria-hidden="true">{{ loop.index }}</span>
+          <div class="info"><b>{{ cupom.marca }}</b><small>{{ cupom.descricao }}</small></div>
+          <span class="pilula {{ 'verde' if liberada }}">{{ 'Liberada' if liberada else cupom.custo ~ ' pts' }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="vazio">Nenhum cupom cadastrado ainda.</p>
+      {% endif %}
+    </section>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
+<script src="{{ url_for('static', filename='js/mapa_perfil.js') }}"></script>
+{% endblock %}

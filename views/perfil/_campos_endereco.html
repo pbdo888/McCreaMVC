@@ -1,0 +1,36 @@
+{#
+  Pedaço de view reaproveitado (incluído com {% include %}) pelo cadastro e
+  pela tela "Alterar endereço". Mostra os campos do endereço e o mapa onde a
+  pessoa marca a casa. O JavaScript (static/js/mapa.js) preenche rua/bairro
+  pelo CEP e a latitude/longitude pelo mapa.
+#}
+<p class="dica">Usamos o endereço da sua casa para indicar a máquina mais próxima. Não usamos sua localização em tempo real.</p>
+<div class="grade-form">
+  <div><label class="campo" for="cep">CEP</label>
+    <input id="cep" name="cep" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" value="{{ valores.get('cep', '') }}" data-cep required></div>
+  <div><label class="campo" for="numero">Número</label>
+    <input id="numero" name="numero" maxlength="10" value="{{ valores.get('numero', '') }}" required></div>
+  <div class="inteiro"><label class="campo" for="logradouro">Rua / Avenida</label>
+    <input id="logradouro" name="logradouro" autocomplete="address-line1" maxlength="120" value="{{ valores.get('logradouro', '') }}" required></div>
+  <div><label class="campo" for="complemento">Complemento <small>(opcional)</small></label>
+    <input id="complemento" name="complemento" autocomplete="address-line2" maxlength="60" placeholder="Apto, bloco…" value="{{ valores.get('complemento', '') }}"></div>
+  <div><label class="campo" for="bairro">Bairro</label>
+    <input id="bairro" name="bairro" maxlength="60" value="{{ valores.get('bairro', '') }}" required></div>
+  <div><label class="campo" for="cidade">Cidade</label>
+    <input id="cidade" name="cidade" autocomplete="address-level2" maxlength="60" value="{{ valores.get('cidade', '') }}" required></div>
+  <div><label class="campo" for="uf">Estado (UF)</label>
+    <select id="uf" name="uf" required>
+      <option value="">UF</option>
+      {% for uf in ufs %}<option {% if valores.get('uf') == uf %}selected{% endif %}>{{ uf }}</option>{% endfor %}
+    </select></div>
+</div>
+
+<button type="button" class="btn branco pequeno" data-localizar>Localizar endereço no mapa</button>
+<div class="mapa-escolha" data-mapa-escolha data-cor-pino="#1a73e8" data-rotulo-pino="Sua casa" aria-label="Mapa para marcar a sua casa"></div>
+<p class="dica" data-mapa-info>Clique em "Localizar endereço no mapa" e confira o pino azul. Você também pode clicar no mapa ou arrastar o pino até a sua casa.</p>
+<div class="grade-form">
+  <div><label class="campo" for="lat">Latitude</label>
+    <input id="lat" name="lat" inputmode="decimal" value="{{ valores.get('lat', '') }}" required></div>
+  <div><label class="campo" for="lng">Longitude</label>
+    <input id="lng" name="lng" inputmode="decimal" value="{{ valores.get('lng', '') }}" required></div>
+</div>

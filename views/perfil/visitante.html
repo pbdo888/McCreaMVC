@@ -1,0 +1,12 @@
+{# Aba Perfil para quem ainda não entrou: convite para criar conta ou entrar. #}
+{% extends "base.html" %}
+{% block titulo %}Perfil{% endblock %}
+{% block conteudo %}
+<section class="bloco boas-vindas" aria-labelledby="tBoasVindas">
+  <div class="avatar-grande"><img src="{{ url_for('static', filename='img/avatar.svg') }}" alt="" width="40" height="53"></div>
+  <h1 id="tBoasVindas">Bem-vindo ao McCrea</h1>
+  <p class="dica">Recicle nas nossas máquinas, ganhe pontos e libere cupons de marcas parceiras.</p>
+  <a class="btn verde largo" href="{{ url_for('perfil.cadastro') }}">Criar conta grátis</a>
+  <a class="btn branco largo" href="{{ url_for('perfil.entrar') }}">Já tenho conta: Entrar</a>
+</section>
+{% endblock %}

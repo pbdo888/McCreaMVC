@@ -1,0 +1,17 @@
+{# Formulário do token do administrador. Envia (POST) para admin.entrar. #}
+{% extends "base.html" %}
+{% block titulo %}Modo administrador{% endblock %}
+{% block conteudo %}
+<section class="bloco formulario-estreito" aria-labelledby="tAdminEntrar">
+  <h1 id="tAdminEntrar"><i class="ico laranja"></i>Modo administrador</h1>
+  <p class="dica">Informe o token de administrador para abrir a central. Ele fica no arquivo <b>.env</b> do projeto (ADMIN_TOKEN).</p>
+  <form method="post" action="{{ url_for('admin.entrar') }}">
+    <label class="campo" for="token">Token</label>
+    <input id="token" name="token" type="password" placeholder="token de admin" autocomplete="off" required autofocus>
+    <div class="acoes">
+      <a class="btn branco" href="{{ url_for('perfil.painel') }}">Cancelar</a>
+      <button class="btn">Entrar</button>
+    </div>
+  </form>
+</section>
+{% endblock %}

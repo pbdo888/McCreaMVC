@@ -1,0 +1,20 @@
+{# Tela "Alterar endereço": os mesmos campos do cadastro, já preenchidos com o endereço atual. #}
+{% extends "base.html" %}
+{% block titulo %}Alterar endereço{% endblock %}
+{% block cabeca %}<link href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" rel="stylesheet">{% endblock %}
+{% block conteudo %}
+<section class="bloco formulario-largo" aria-labelledby="tEndereco">
+  <h1 id="tEndereco"><i class="ico"></i>Alterar endereço</h1>
+  <form method="post" action="{{ url_for('perfil.alterar_endereco') }}">
+    {% include "perfil/_campos_endereco.html" %}
+    <div class="acoes">
+      <a class="btn branco" href="{{ url_for('perfil.painel') }}">Cancelar</a>
+      <button class="btn">Salvar endereço</button>
+    </div>
+  </form>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
+<script src="{{ url_for('static', filename='js/mapa.js') }}"></script>
+{% endblock %}

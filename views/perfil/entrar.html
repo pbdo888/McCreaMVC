@@ -1,0 +1,20 @@
+{# Formulário de login. Envia (POST) para perfil.entrar, que confere com o model Usuario. #}
+{% extends "base.html" %}
+{% block titulo %}Entrar{% endblock %}
+{% block conteudo %}
+<section class="bloco formulario-estreito" aria-labelledby="tEntrar">
+  <h1 id="tEntrar"><i class="ico"></i>Entrar</h1>
+  <p class="dica">Use o e-mail e a senha do seu cadastro.</p>
+  <form method="post" action="{{ url_for('perfil.entrar') }}">
+    <label class="campo" for="email">E-mail</label>
+    <input id="email" name="email" type="email" autocomplete="email" value="{{ email }}" required autofocus>
+    <label class="campo" for="senha">Senha</label>
+    <input id="senha" name="senha" type="password" autocomplete="current-password" required>
+    <div class="acoes">
+      <a class="btn branco" href="{{ url_for('perfil.painel') }}">Cancelar</a>
+      <button class="btn">Entrar</button>
+    </div>
+  </form>
+  <p class="dica centro">Ainda não tem conta? <a class="link" href="{{ url_for('perfil.cadastro') }}">Criar conta</a></p>
+</section>
+{% endblock %}

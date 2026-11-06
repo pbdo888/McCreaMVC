@@ -1,0 +1,35 @@
+{#
+  Editar um anúncio (o U de CRUD). Dados recebidos do controller:
+    anuncio -> o objeto Anuncio sendo editado
+    valores -> valores atuais dos campos (ou o que foi digitado, se voltou com erro)
+#}
+{% extends "base.html" %}
+{% block titulo %}Editar anúncio{% endblock %}
+{% block conteudo %}
+<div class="tela-cab">
+  <a class="voltar" href="{{ url_for('admin.painel', _anchor='anuncios') }}" aria-label="Voltar para a central">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg>
+  </a>
+  <h1>Editar anúncio</h1>
+</div>
+<section class="bloco formulario-largo" aria-label="Formulário do anúncio">
+  <img class="previa-cartaz" src="{{ anuncio.imagem }}" alt="Cartaz atual: {{ anuncio.titulo }}">
+  <form method="post" action="{{ url_for('admin.editar_anuncio', anuncio_id=anuncio.id) }}" enctype="multipart/form-data">
+    <label class="campo" for="an_imagem">Trocar cartaz <small>(deixe vazio para manter o atual; até {{ max_mb }} MB)</small></label>
+    <input id="an_imagem" name="imagem" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
+    <label class="campo" for="an_titulo">Título</label>
+    <input id="an_titulo" name="titulo" minlength="3" maxlength="120" value="{{ valores.get('titulo', '') }}" required>
+    <label class="campo" for="an_texto">Texto completo</label>
+    <textarea id="an_texto" name="texto" rows="10" maxlength="5000" required>{{ valores.get('texto', '') }}</textarea>
+    <div class="grade-form">
+      <div><label class="campo" for="an_ordem">Ordem <small>(menor aparece antes)</small></label>
+        <input id="an_ordem" name="ordem" type="number" min="0" max="9999" value="{{ valores.get('ordem', 0) }}"></div>
+      <div><label class="check alinhado"><input type="checkbox" name="ativo" value="1" {% if valores.get('ativo') %}checked{% endif %}> <span>Publicado</span></label></div>
+    </div>
+    <div class="acoes">
+      <a class="btn branco" href="{{ url_for('admin.painel', _anchor='anuncios') }}">Cancelar</a>
+      <button class="btn verde">Salvar alterações</button>
+    </div>
+  </form>
+</section>
+{% endblock %}
